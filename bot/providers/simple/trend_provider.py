@@ -1,11 +1,10 @@
-# bot/providers/simple/trend_provider.py
 """
 Simple trend provider using free APIs
 """
 
 import asyncio
 import aiohttp
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import json
 from datetime import datetime, timedelta
 
@@ -153,6 +152,9 @@ class SimpleTrendProvider(BaseTrendProvider):
             return trends
         except ImportError:
             print("pytrends not installed")
+            return []
+        except Exception as e:
+            print(f"Google Trends sync error: {e}")
             return []
     
     async def _get_wikipedia_trends(self) -> List[Trend]:
@@ -316,3 +318,8 @@ class SimpleTrendProvider(BaseTrendProvider):
         
         # Sort by score descending
         return sorted(scored, key=lambda x: x.score, reverse=True)
+    
+    async def close(self):
+        """Close provider resources"""
+        if self.session:
+            await self.session.close()
