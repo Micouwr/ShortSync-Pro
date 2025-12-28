@@ -105,4 +105,28 @@ class ConfigManager:
     def stop_watching(self):
         """Stop watching for configuration file changes"""
         if self.observer:
-            self.
+            self.observer.stop()
+            self.observer.join()
+    
+    @staticmethod
+    def find_changed_keys(old_dict: Dict, new_dict: Dict, prefix: str = '') -> list:
+        """Find keys that changed between two dictionaries"""
+        changed = []
+        
+        all_keys = set(old_dict.keys()) | set(new_dict.keys())
+        
+        for key in all_keys:
+            full_key = f"{prefix}.{key}" if prefix else key
+            
+            if key not in old_dict:
+                changed.append(full_key)
+            elif key not in new_dict:
+                changed.append(full_key)
+            elif isinstance(old_dict[key], dict) and isinstance(new_dict[key], dict):
+                changed.extend(
+                    ConfigManager.find_changed_keys(old_dict[key], new_dict[key], full_key)
+                )
+            elif old_dict[key] != new_dict[key]:
+                changed.append(full_key)
+        
+        return changed
