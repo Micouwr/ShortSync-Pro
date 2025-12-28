@@ -1,433 +1,161 @@
-# ShortSync Pro - Professional YouTube Shorts Automation Bot
+SHORTSYNC PRO - YouTube Shorts Automation Bot
+==============================================
 
-A modular, scalable system for creating and managing YouTube Shorts content with human quality control and anti-AI-slop protection.
+A professional system for creating YouTube Shorts with AI and human quality control.
 
-## Features
+INSTALLATION
+============
 
-### AI-Powered Content Creation
-- **Multi-AI Script Generation**: Cohere, Hugging Face, OpenAI, Claude with fallback logic
-- **Trend Detection**: Free APIs (no scraping) for trending topics
-- **Professional Thumbnails**: Auto-generated with branding templates
-- **Voiceover Generation**: ElevenLabs & Google TTS integration
-- **Video Assembly**: Stock footage + voiceover + thumbnails
+1. Clone repository
+2. Create virtual environment: python -m venv venv
+3. Activate: source venv/bin/activate (Windows: venv\Scripts\activate)
+4. Install: pip install -r requirements.txt
+5. Copy .env.example to .env and add your API keys
 
-### Quality Assurance
-- **Anti-AI-Slop System**: Detects and improves low-quality content
-- **Human Approval Required**: One-click approve/reject workflow
-- **Minimum Quality Score**: 70/100 threshold for auto-approval
-- **Fact Checking**: MCP-ready verification system
+REQUIRED API KEYS
+=================
 
-### Production Ready
-- **Docker & Kubernetes**: Full production deployment
-- **Health Monitoring**: Built-in health check server (port 8081)
-- **Web Dashboard**: Optional management interface
-- **Notifications**: Email/Discord/Telegram alerts
+- YOUTUBE_API_KEY
+- COHERE_API_KEY
+- PEXELS_API_KEY
+- ELEVENLABS_API_KEY
 
-### Management
-- **Multi-Channel Support**: Manage multiple YouTube channels
-- **Content Calendar**: Automated scheduling
-- **Analytics**: Performance tracking and optimization
-- **License Management**: BSL 1.1 with free tier (<10k subs)
+OPTIONAL API KEYS
+=================
 
-## Project Structure
+- HF_API_KEY (Hugging Face)
+- OPENAI_API_KEY
+- UNSPLASH_API_KEY
+- NEWSAPI_KEY
+
+RUNNING THE BOT
+===============
+
+Development: python -m bot.main --dev
+Production: python -m bot.main
+One-time: python -m bot.main --oneshot
+Health check: python -m bot.main --health
+
+FEATURES
+========
+
+- AI Script Generation (Cohere, Hugging Face, OpenAI, Claude)
+- Trend Detection with free APIs
+- Professional Thumbnail Creation
+- Voiceover Generation (ElevenLabs/Google TTS)
+- Video Assembly from stock footage
+- Human Approval System
+- Anti-AI-Slop Quality Checks
+- Docker & Kubernetes Deployment
+- Multi-Channel Support
+
+PROJECT STRUCTURE
+=================
+
 youtube_bot/
-├── bot/
-│ ├── init.py
-│ ├── main.py
-│ ├── config.py
-│ ├── cli.py
-│ ├── core/
-│ │ ├── init.py
-│ │ ├── state_manager.py
-│ │ ├── job_queue.py
-│ │ ├── enhanced_pipeline.py
-│ │ ├── health.py
-│ │ ├── circuit_breaker.py
-│ │ └── config_manager.py
-│ ├── database/
-│ │ ├── init.py
-│ │ ├── manager.py
-│ │ └── models.py
-│ ├── providers/
-│ │ ├── init.py
-│ │ ├── base.py
-│ │ ├── factory.py
-│ │ └── simple/
-│ │ ├── init.py
-│ │ ├── script_provider.py
-│ │ ├── trend_provider.py
-│ │ ├── asset_provider.py
-│ │ ├── voiceover_provider.py
-│ │ └── video_provider.py
-│ └── utils/
-│ ├── init.py
-│ ├── cleanup.py
-│ └── youtube_api.py
-├── docker/
-│ ├── Dockerfile
-│ └── entrypoint.sh
-├── k8s/
-│ └── deployment.yml
-├── data/
-├── logs/
-├── assets/
-├── output/
-├── .env
-├── .gitignore
-├── LICENSE
-├── requirements.txt
-├── docker-compose.yml
-├── docker-compose.prod.yml
-└── Makefile
+  bot/ - Main Python package
+  docker/ - Docker configurations
+  k8s/ - Kubernetes manifests
+  data/ - Persistent data
+  logs/ - Application logs
+  output/ - Generated content
+  .env - Environment variables
+  requirements.txt - Dependencies
 
-# API Keys
-YOUTUBE_API_KEY=your_youtube_api_key
-COHERE_API_KEY=your_cohere_key
-PEXELS_API_KEY=your_pexels_key
-ELEVENLABS_API_KEY=your_elevenlabs_key
-HF_API_KEY=your_huggingface_key
-OPENAI_API_KEY=your_openai_key
+DOCKER DEPLOYMENT
+=================
 
-# Bot Settings
-ENVIRONMENT=development
-MAX_DAILY_UPLOADS=3
-LOG_LEVEL=INFO
+Build: docker build -t shortsync-pro .
+Run: docker run -d --name shortsync -p 8081:8081 -v $(pwd)/data:/app/data --env-file .env shortsync-pro
+Compose: docker-compose up -d
 
-# Optional APIs
-UNSPLASH_API_KEY=your_unsplash_key
-NEWSAPI_KEY=your_newsapi_key
+KUBERNETES DEPLOYMENT
+=====================
 
-Running the Bot
-# Development mode
-python -m bot.main --dev
+Apply: kubectl apply -f k8s/deployment.yml
+Check: kubectl get pods -l app=shortsync-pro
 
-# Production mode
-python -m bot.main
+CONFIGURATION FILES
+===================
 
-# Run once and exit
-python -m bot.main --oneshot
+1. .env - Environment variables (see above)
+2. data/channels.json - Channel configurations
+3. config/settings.yml - YAML settings
 
-# Health check only
-python -m bot.main --health
-
-# Start web dashboard
-python -m bot.main --dashboard
-
-Docker Deployment
-# Build image
-docker build -t shortsync-pro .
-
-# Run container
-docker run -d \
-  --name shortsync \
-  -p 8081:8081 \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/output:/app/output \
-  --env-file .env \
-  shortsync-pro
-
-# Docker Compose
-docker-compose up -d
-
-Kubernetes Deployment
-# Apply deployment
-kubectl apply -f k8s/deployment.yml
-
-# Check status
-kubectl get pods -l app=shortsync-pro
-
-Configuration Files
-Channel Configuration (data/channels.json)
+Example channels.json:
 [
   {
-    "name": "Tech Explained",
+    "name": "Tech Channel",
     "niche": "technology",
-    "quality_standard": "premium",
-    "upload_schedule": {
-      "monday": ["09:00", "13:00", "18:00"],
-      "tuesday": ["09:00", "13:00", "18:00"],
-      "wednesday": ["09:00", "13:00", "18:00"],
-      "thursday": ["09:00", "13:00", "18:00"],
-      "friday": ["09:00", "13:00", "18:00"],
-      "saturday": ["10:00", "14:00"],
-      "sunday": ["10:00", "14:00"]
-    },
-    "branding": {
-      "intro_template": "tech_intro.mp4",
-      "outro_template": "tech_outro.png",
-      "watermark": "tech_logo.png",
-      "color_scheme": "#FF6B6B",
-      "voice_id": "tech_male"
-    }
+    "quality_standard": "standard"
   }
 ]
 
-YAML Configuration (config/settings.yml)
-environment: production
-debug: false
+CLI COMMANDS
+============
 
-modules:
-  trend_detection:
-    enabled: true
-    provider_type: simple
-    timeout_seconds: 30
-  
-  script_generation:
-    enabled: true
-    provider_type: hybrid
-    mcp_server_url: http://localhost:8000
-    fallback_to_simple: true
-
-pipeline:
-  max_concurrent_jobs: 3
-  job_timeout_minutes: 15
-  retry_attempts: 3
-
-youtube:
-  max_daily_uploads: 3
-  min_upload_interval: 14400
-  default_privacy: private
-
-content:
-  default_duration: 45
-  min_quality_score: 70.0
-  max_title_length: 100
-
-  ## Usage Examples
-
-### CLI Commands
-
-# Show help
-python -m bot.cli --help
-
-# List channels
 python -m bot.cli channels list
-
-# Create new channel
-python -m bot.cli channels create --name "Science Facts" --niche science
-
-# Generate single video
-python -m bot.cli videos generate --topic "Quantum Computing"
-
-# Approve pending videos
+python -m bot.cli channels create --name "Science" --niche science
+python -m bot.cli videos generate --topic "AI"
 python -m bot.cli videos approve --id video_123
-
-# Upload approved videos
 python -m bot.cli videos upload --limit 2
-
-# Show statistics
 python -m bot.cli stats
 
-Python API
+PYTHON API
+==========
+
 from bot.config import get_config
 from bot.main import ShortSyncBot
 
-# Initialize bot
 config = get_config()
 bot = ShortSyncBot(config)
-
-# Create video job
-job_id = await bot.create_video_job(
-    topic="Artificial Intelligence",
-    channel="Tech Explained"
-)
-
-# Check status
-status = await bot.get_job_status(job_id)
-print(f"Job {job_id}: {status['status']}")
-
-# Get statistics
-stats = await bot.get_statistics()
-print(f"Videos created: {stats['total_videos_created']}")
-
-Provider System
-
-Available Providers
-
-Provider	Type	Dependencies	Status
-Script Generation	Cohere, Hugging Face, OpenAI, Claude	cohere, transformers, openai	READY
-Trend Detection	Reddit, Google Trends, Wikipedia	pytrends, aiohttp	READY
-Asset Gathering	Pexels, Unsplash, Pixabay	pexels-api, unsplashpy	READY
-Voiceover	ElevenLabs, Google TTS, System TTS	elevenlabs, gTTS	READY
-Video Assembly	MoviePy, PIL	moviepy, pillow	READY
-
-Adding Custom Providers
-1. Create provider class:
-   from bot.providers.base import BaseScriptProvider
-
-class CustomScriptProvider(BaseScriptProvider):
-    async def generate_script(self, topic: str, duration_seconds: int):
-        # Your implementation
-        pass
-    
-    async def improve_script(self, script):
-        # Your implementation
-        pass
-
-2. Register in factory:
-  from bot.providers.factory import register_provider
-
-register_provider('custom_script', CustomScriptProvider)
-
-Quality System
-Anti-AI-Slop Features
-Content Scoring: Each script receives quality score (0-100)
-
-Minimum Threshold: Default 70/100 required for approval
-
-Auto-Improvement: Low-quality scripts are automatically enhanced
-
-Human Review: All content requires one-click human approval
-
-Blacklist System: Block low-quality topics and patterns
-
-Quality Metrics
-Readability Score: Flesch-Kincaid grade level
-
-Engagement Score: Hook strength, pacing, CTA effectiveness
-
-Accuracy Score: Fact verification (when MCP enabled)
-
-Production Quality: Audio clarity, visual appeal
-
-Monitoring & Analytics
-Health Checks
-Access health dashboard at http://localhost:8081:
-
-/health - Overall system health
-
-/ready - Readiness for traffic
-
-/metrics - Performance metrics
-
-/info - System information
-
-Logging
-import logging
-logging.basicConfig(level=logging.INFO)
-
-# Structured logging
-logger = logging.getLogger(__name__)
-logger.info("Job completed", extra={"job_id": job_id, "duration": duration})
-
-Metrics Collection
-Job Processing Time: Average time per job type
-
-Success Rate: Percentage of successful completions
-
-API Usage: Provider API call statistics
-
-Resource Usage: CPU, memory, disk utilization
-
-## Troubleshooting
-
-### Common Issues
-- **Issue**: "ModuleNotFoundError: No module named 'moviepy'"
-  **Solution**: Install missing dependencies: `pip install moviepy pillow`
-
-- **Issue**: "API rate limit exceeded"
-  **Solution**: Configure rate limits in provider settings or use API keys with higher limits
-
-- **Issue**: "YouTube API quota exceeded"
-  **Solution**: Reduce `MAX_DAILY_UPLOADS` or request quota increase from Google
-
-- **Issue**: "Video assembly failed"
-  **Solution**: Check ffmpeg installation: `ffmpeg -version`
-
-### Debug Mode
-
-# Enable debug logging
-export LOG_LEVEL=DEBUG
-python -m bot.main --dev
-
-# Check logs
-tail -f logs/bot.log
-Security & Privacy
-Data Protection
-API Keys: Stored in .env file (never in source code)
-
-Database: SQLite with encrypted sensitive fields
-
-Logs: No personal data in logs
-
-Temporary Files: Auto-cleanup after processing
-
-YouTube Compliance
-Rate Limiting: Respects YouTube API quotas
-
-Content Guidelines: Quality system enforces community guidelines
-
-Transparency: Clearly labels AI-generated content when required
-
-Copyright: Uses only licensed/royalty-free assets
-
-License
-ShortSync Pro is licensed under the Business Source License 1.1 (BSL 1.1).
-
-Key Points:
-
-Free: For channels with <10,000 subscribers
-
-Commercial: Requires license for larger channels
-
-Source Available: Full source code provided
-
-No Reselling: Cannot resell or provide as service without license
-
-See LICENSE file for complete terms.
-
-Contributing
-Fork the repository
-
-Create feature branch: git checkout -b feature/amazing-feature
-
-Commit changes: git commit -m 'Add amazing feature'
-
-Push to branch: git push origin feature/amazing-feature
-
-Open Pull Request
-
-Development Setup
-bash
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Run tests
-pytest tests/
-
-# Format code
-black bot/
-isort bot/
-
-# Type checking
-mypy bot/
-Code Style
-Follow PEP 8
-
-Use type hints
-
-Write docstrings
-
-Add tests for new features
-
-Support
-Documentation: docs.shortsync.pro
-
-Issues: GitHub Issues
-
-Discord: Community Server
-
-Email: support@shortsync.pro
-
-Acknowledgments
-MoviePy: Video processing library
-
-Cohere: AI text generation
-
-ElevenLabs: Voice synthesis
-
-Pexels/Unsplash: Stock media
-
-YouTube API: Platform integration
-
-Disclaimer: This tool is for educational purposes. Always follow YouTube's Terms of Service and Community Guidelines. The developers are not responsible for any content created using this tool.
+job_id = await bot.create_video_job(topic="AI", channel="Tech")
+
+QUALITY SYSTEM
+==============
+
+- Minimum Quality Score: 70/100
+- Human Approval Required
+- Auto-Improvement for Low-Quality Content
+- Content Blacklisting
+- Fact Checking Available
+
+MONITORING
+==========
+
+Health dashboard: http://localhost:8081
+Endpoints:
+- /health - System health
+- /ready - Readiness check
+- /metrics - Performance metrics
+- /info - System information
+
+TROUBLESHOOTING
+===============
+
+1. Missing dependencies: pip install moviepy pillow
+2. API rate limits: Reduce MAX_DAILY_UPLOADS in .env
+3. YouTube quota: Request quota increase from Google
+4. Video assembly: Check ffmpeg installation
+5. Debug mode: export LOG_LEVEL=DEBUG; python -m bot.main --dev
+
+LICENSE
+=======
+
+Business Source License 1.1 (BSL 1.1)
+- Free for channels with <10,000 subscribers
+- Commercial license required for larger channels
+- See LICENSE file for complete terms
+
+SUPPORT
+=======
+
+- GitHub Issues for bug reports
+- Email: support@shortsync.pro
+
+DISCLAIMER
+==========
+
+For educational purposes only. Always follow YouTube's Terms of Service
+and Community Guidelines. Developers are not responsible for content
+created using this tool.
