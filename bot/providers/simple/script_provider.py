@@ -6,7 +6,7 @@ Simple script generator using free AI APIs
 import asyncio
 import aiohttp
 import json
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import re
 
 from bot.providers.base import BaseScriptProvider, Script
