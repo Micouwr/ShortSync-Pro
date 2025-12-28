@@ -2,114 +2,84 @@
 
 A modular, scalable system for creating and managing YouTube Shorts content with human quality control and anti-AI-slop protection.
 
-## 🎯 Features
+## Features
 
-### 🤖 AI-Powered Content Creation
+### AI-Powered Content Creation
 - **Multi-AI Script Generation**: Cohere, Hugging Face, OpenAI, Claude with fallback logic
 - **Trend Detection**: Free APIs (no scraping) for trending topics
 - **Professional Thumbnails**: Auto-generated with branding templates
 - **Voiceover Generation**: ElevenLabs & Google TTS integration
 - **Video Assembly**: Stock footage + voiceover + thumbnails
 
-### 🛡️ Quality Assurance
+### Quality Assurance
 - **Anti-AI-Slop System**: Detects and improves low-quality content
 - **Human Approval Required**: One-click approve/reject workflow
 - **Minimum Quality Score**: 70/100 threshold for auto-approval
 - **Fact Checking**: MCP-ready verification system
 
-### 🚀 Production Ready
+### Production Ready
 - **Docker & Kubernetes**: Full production deployment
 - **Health Monitoring**: Built-in health check server (port 8081)
 - **Web Dashboard**: Optional management interface
 - **Notifications**: Email/Discord/Telegram alerts
 
-### 📊 Management
+### Management
 - **Multi-Channel Support**: Manage multiple YouTube channels
 - **Content Calendar**: Automated scheduling
 - **Analytics**: Performance tracking and optimization
 - **License Management**: BSL 1.1 with free tier (<10k subs)
 
-## 📁 Project Structure
+## Project Structure
 youtube_bot/
-├── bot/ # Main Python package
-│ ├── init.py # Package initialization
-│ ├── main.py # Entry point with CLI
-│ ├── config.py # Configuration management
-│ ├── cli.py # Command line interface
-│ ├── core/ # Core framework
+├── bot/
+│ ├── init.py
+│ ├── main.py
+│ ├── config.py
+│ ├── cli.py
+│ ├── core/
 │ │ ├── init.py
-│ │ ├── state_manager.py # State management
-│ │ ├── job_queue.py # Async job processing
-│ │ ├── enhanced_pipeline.py # Main pipeline
-│ │ ├── health.py # Health checks
-│ │ ├── circuit_breaker.py # API failure protection
-│ │ └── config_manager.py # Dynamic config
-│ ├── database/ # Data persistence
+│ │ ├── state_manager.py
+│ │ ├── job_queue.py
+│ │ ├── enhanced_pipeline.py
+│ │ ├── health.py
+│ │ ├── circuit_breaker.py
+│ │ └── config_manager.py
+│ ├── database/
 │ │ ├── init.py
-│ │ ├── manager.py # Database operations
-│ │ └── models.py # Data models
-│ ├── providers/ # AI and service providers
+│ │ ├── manager.py
+│ │ └── models.py
+│ ├── providers/
 │ │ ├── init.py
-│ │ ├── base.py # Abstract provider classes
-│ │ ├── factory.py # Provider factory
-│ │ └── simple/ # Simple implementations
+│ │ ├── base.py
+│ │ ├── factory.py
+│ │ └── simple/
 │ │ ├── init.py
 │ │ ├── script_provider.py
 │ │ ├── trend_provider.py
 │ │ ├── asset_provider.py
 │ │ ├── voiceover_provider.py
 │ │ └── video_provider.py
-│ └── utils/ # Utilities
+│ └── utils/
 │ ├── init.py
 │ ├── cleanup.py
 │ └── youtube_api.py
-├── docker/ # Docker configurations
+├── docker/
 │ ├── Dockerfile
 │ └── entrypoint.sh
-├── k8s/ # Kubernetes manifests
+├── k8s/
 │ └── deployment.yml
-├── data/ # Persistent data
-├── logs/ # Application logs
-├── assets/ # Static assets
-├── output/ # Generated content
-├── .env # Environment variables
+├── data/
+├── logs/
+├── assets/
+├── output/
+├── .env
 ├── .gitignore
 ├── LICENSE
-├── requirements.txt # Python dependencies
-├── docker-compose.yml # Development
-├── docker-compose.prod.yml # Production
-└── Makefile # Common tasks
+├── requirements.txt
+├── docker-compose.yml
+├── docker-compose.prod.yml
+└── Makefile
 
-text
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.9+
-- Docker (optional)
-- API Keys (see Configuration)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd youtube_bot
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Setup environment
-cp .env.example .env
-# Edit .env with your API keys
-Configuration
-Create .env file:
-
-env
 # API Keys
 YOUTUBE_API_KEY=your_youtube_api_key
 COHERE_API_KEY=your_cohere_key
@@ -126,8 +96,8 @@ LOG_LEVEL=INFO
 # Optional APIs
 UNSPLASH_API_KEY=your_unsplash_key
 NEWSAPI_KEY=your_newsapi_key
+
 Running the Bot
-bash
 # Development mode
 python -m bot.main --dev
 
@@ -142,8 +112,8 @@ python -m bot.main --health
 
 # Start web dashboard
 python -m bot.main --dashboard
+
 Docker Deployment
-bash
 # Build image
 docker build -t shortsync-pro .
 
@@ -158,16 +128,16 @@ docker run -d \
 
 # Docker Compose
 docker-compose up -d
+
 Kubernetes Deployment
-bash
 # Apply deployment
 kubectl apply -f k8s/deployment.yml
 
 # Check status
 kubectl get pods -l app=shortsync-pro
-⚙️ Configuration Files
+
+Configuration Files
 Channel Configuration (data/channels.json)
-json
 [
   {
     "name": "Tech Explained",
@@ -191,8 +161,8 @@ json
     }
   }
 ]
+
 YAML Configuration (config/settings.yml)
-yaml
 environment: production
 debug: false
 
@@ -222,9 +192,11 @@ content:
   default_duration: 45
   min_quality_score: 70.0
   max_title_length: 100
-📋 Usage Examples
-CLI Commands
-bash
+
+  ## Usage Examples
+
+### CLI Commands
+
 # Show help
 python -m bot.cli --help
 
@@ -245,8 +217,8 @@ python -m bot.cli videos upload --limit 2
 
 # Show statistics
 python -m bot.cli stats
+
 Python API
-python
 from bot.config import get_config
 from bot.main import ShortSyncBot
 
@@ -267,19 +239,21 @@ print(f"Job {job_id}: {status['status']}")
 # Get statistics
 stats = await bot.get_statistics()
 print(f"Videos created: {stats['total_videos_created']}")
-🔧 Provider System
-Available Providers
-Provider	Type	Dependencies	Status
-Script Generation	Cohere, Hugging Face, OpenAI, Claude	cohere, transformers, openai	✅
-Trend Detection	Reddit, Google Trends, Wikipedia	pytrends, aiohttp	✅
-Asset Gathering	Pexels, Unsplash, Pixabay	pexels-api, unsplashpy	✅
-Voiceover	ElevenLabs, Google TTS, System TTS	elevenlabs, gTTS	✅
-Video Assembly	MoviePy, PIL	moviepy, pillow	✅
-Adding Custom Providers
-Create provider class:
 
-python
-from bot.providers.base import BaseScriptProvider
+Provider System
+
+Available Providers
+
+Provider	Type	Dependencies	Status
+Script Generation	Cohere, Hugging Face, OpenAI, Claude	cohere, transformers, openai	READY
+Trend Detection	Reddit, Google Trends, Wikipedia	pytrends, aiohttp	READY
+Asset Gathering	Pexels, Unsplash, Pixabay	pexels-api, unsplashpy	READY
+Voiceover	ElevenLabs, Google TTS, System TTS	elevenlabs, gTTS	READY
+Video Assembly	MoviePy, PIL	moviepy, pillow	READY
+
+Adding Custom Providers
+1. Create provider class:
+   from bot.providers.base import BaseScriptProvider
 
 class CustomScriptProvider(BaseScriptProvider):
     async def generate_script(self, topic: str, duration_seconds: int):
@@ -289,13 +263,13 @@ class CustomScriptProvider(BaseScriptProvider):
     async def improve_script(self, script):
         # Your implementation
         pass
-Register in factory:
 
-python
-from bot.providers.factory import register_provider
+2. Register in factory:
+  from bot.providers.factory import register_provider
 
 register_provider('custom_script', CustomScriptProvider)
-🛡️ Quality System
+
+Quality System
 Anti-AI-Slop Features
 Content Scoring: Each script receives quality score (0-100)
 
@@ -316,7 +290,7 @@ Accuracy Score: Fact verification (when MCP enabled)
 
 Production Quality: Audio clarity, visual appeal
 
-📊 Monitoring & Analytics
+Monitoring & Analytics
 Health Checks
 Access health dashboard at http://localhost:8081:
 
@@ -329,13 +303,13 @@ Access health dashboard at http://localhost:8081:
 /info - System information
 
 Logging
-python
 import logging
 logging.basicConfig(level=logging.INFO)
 
 # Structured logging
 logger = logging.getLogger(__name__)
 logger.info("Job completed", extra={"job_id": job_id, "duration": duration})
+
 Metrics Collection
 Job Processing Time: Average time per job type
 
@@ -345,29 +319,30 @@ API Usage: Provider API call statistics
 
 Resource Usage: CPU, memory, disk utilization
 
-🐛 Troubleshooting
-Common Issues
-Issue: "ModuleNotFoundError: No module named 'moviepy'"
-Solution: Install missing dependencies: pip install moviepy pillow
+## Troubleshooting
 
-Issue: "API rate limit exceeded"
-Solution: Configure rate limits in provider settings or use API keys with higher limits
+### Common Issues
+- **Issue**: "ModuleNotFoundError: No module named 'moviepy'"
+  **Solution**: Install missing dependencies: `pip install moviepy pillow`
 
-Issue: "YouTube API quota exceeded"
-Solution: Reduce MAX_DAILY_UPLOADS or request quota increase from Google
+- **Issue**: "API rate limit exceeded"
+  **Solution**: Configure rate limits in provider settings or use API keys with higher limits
 
-Issue: "Video assembly failed"
-Solution: Check ffmpeg installation: ffmpeg -version
+- **Issue**: "YouTube API quota exceeded"
+  **Solution**: Reduce `MAX_DAILY_UPLOADS` or request quota increase from Google
 
-Debug Mode
-bash
+- **Issue**: "Video assembly failed"
+  **Solution**: Check ffmpeg installation: `ffmpeg -version`
+
+### Debug Mode
+
 # Enable debug logging
 export LOG_LEVEL=DEBUG
 python -m bot.main --dev
 
 # Check logs
 tail -f logs/bot.log
-🔒 Security & Privacy
+Security & Privacy
 Data Protection
 API Keys: Stored in .env file (never in source code)
 
@@ -386,7 +361,7 @@ Transparency: Clearly labels AI-generated content when required
 
 Copyright: Uses only licensed/royalty-free assets
 
-📄 License
+License
 ShortSync Pro is licensed under the Business Source License 1.1 (BSL 1.1).
 
 Key Points:
@@ -401,7 +376,7 @@ No Reselling: Cannot resell or provide as service without license
 
 See LICENSE file for complete terms.
 
-🤝 Contributing
+Contributing
 Fork the repository
 
 Create feature branch: git checkout -b feature/amazing-feature
@@ -435,7 +410,7 @@ Write docstrings
 
 Add tests for new features
 
-📞 Support
+Support
 Documentation: docs.shortsync.pro
 
 Issues: GitHub Issues
@@ -444,7 +419,7 @@ Discord: Community Server
 
 Email: support@shortsync.pro
 
-🙏 Acknowledgments
+Acknowledgments
 MoviePy: Video processing library
 
 Cohere: AI text generation
