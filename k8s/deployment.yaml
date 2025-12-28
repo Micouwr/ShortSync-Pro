@@ -1,0 +1,110 @@
+# k8s/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shortsync
+  namespace: shortsync
+  labels:
+    app: shortsync
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shortsync
+  template:
+    metadata:
+      labels:
+        app: shortsync
+    spec:
+      containers:
+      - name: shortsync
+        image: shortsync-pro:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: REDIS_HOST
+          value: "redis"
+        - name: DB_HOST
+          value: "postgres"
+        envFrom:
+        - secretRef:
+            name: shortsync-secrets
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        - name: logs
+          mountPath: /app/logs
+        - name: output
+          mountPath: /app/output
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: shortsync-data-pvc
+      - name: logs
+        persistentVolumeClaim:
+          claimName: shortsync-logs-pvc
+      - name: output
+        persistentVolumeClaim:
+          claimName: shortsync-output-pvc
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: shortsync
+  namespace: shortsync
+spec:
+  selector:
+    app: shortsync
+  ports:
+  - port: 8080
+    targetPort: http
+    name: http
+---
+# Ingress (if using)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shortsync-ingress
+  namespace: shortsync
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - shortsync.yourdomain.com
+    secretName: shortsync-tls
+  rules:
+  - host: shortsync.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: shortsync
+            port:
+              name: http
