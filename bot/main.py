@@ -20,7 +20,7 @@ from typing import Optional
 try:
     from bot.config import get_config, Config
 except ImportError as e:
-    print(f"❌ Error importing config: {e}")
+    print(f"ERROR: Importing config failed: {e}")
     print("Make sure bot/__init__.py and bot/config.py exist")
     sys.exit(1)
 
@@ -55,7 +55,7 @@ async def shutdown(signal_name: str, logger: logging.Logger):
     """
     Simple graceful shutdown
     """
-    logger.info(f"🛑 Received {signal_name}, shutting down...")
+    logger.info(f"Received {signal_name}, shutting down...")
     
     # Cancel all running tasks
     tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
@@ -68,7 +68,7 @@ async def shutdown(signal_name: str, logger: logging.Logger):
         # Wait for tasks to complete cancellation
         await asyncio.gather(*tasks, return_exceptions=True)
     
-    logger.info("✅ Shutdown complete")
+    logger.info("Shutdown complete")
 
 async def initialize_basic_components(config: Config, logger: logging.Logger) -> dict:
     """
@@ -77,15 +77,15 @@ async def initialize_basic_components(config: Config, logger: logging.Logger) ->
     components = {}
     
     try:
-        logger.info("📦 Initializing basic components...")
+        logger.info("Initializing basic components...")
         
         # We'll add components as we create them
         # For now, just return empty dict
         
-        logger.info("✅ Basic components initialized")
+        logger.info("Basic components initialized")
         
     except Exception as e:
-        logger.error(f"❌ Failed to initialize components: {e}")
+        logger.error(f"Failed to initialize components: {e}")
         # Don't raise - we want to continue with what we have
     
     return components
@@ -95,13 +95,13 @@ async def run_basic_pipeline(config: Config, logger: logging.Logger):
     Run a simple test pipeline
     """
     try:
-        logger.info("🚀 Starting basic pipeline...")
+        logger.info("Starting basic pipeline...")
         
         # Simple test loop
         iteration = 0
         while True:
             iteration += 1
-            logger.info(f"📊 Pipeline iteration {iteration}")
+            logger.info(f"Pipeline iteration {iteration}")
             logger.info(f"   Environment: {config.environment}")
             logger.info(f"   Debug mode: {config.debug}")
             
@@ -113,7 +113,7 @@ async def run_basic_pipeline(config: Config, logger: logging.Logger):
             
             # Check for stop condition (every 5 iterations)
             if iteration >= 5:
-                logger.info("✅ Test completed successfully")
+                logger.info("Test completed successfully")
                 break
             
             # Simulate work
@@ -123,7 +123,7 @@ async def run_basic_pipeline(config: Config, logger: logging.Logger):
         logger.info("Pipeline cancelled")
         raise
     except Exception as e:
-        logger.error(f"❌ Pipeline error: {e}")
+        logger.error(f"Pipeline error: {e}")
         raise
 
 async def main() -> int:
@@ -157,19 +157,19 @@ async def main() -> int:
         if args.debug:
             logger.setLevel(logging.DEBUG)
             logging.getLogger().setLevel(logging.DEBUG)
-            logger.debug("🔍 Debug logging enabled")
+            logger.debug("Debug logging enabled")
         
         # Banner
-        logger.info("\n" + "="*60)
-        logger.info("🚀 ShortSync Pro - YouTube Automation Bot")
-        logger.info(f"📅 Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        logger.info(f"🏷️ Version: 1.0.0")
-        logger.info(f"⚙️ Environment: {config.environment}")
-        logger.info(f"🐛 Debug: {config.debug}")
-        logger.info("="*60 + "\n")
+        logger.info("\n" + "=" * 60)
+        logger.info("ShortSync Pro - YouTube Automation Bot")
+        logger.info(f"Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"Version: 1.0.0")
+        logger.info(f"Environment: {config.environment}")
+        logger.info(f"Debug: {config.debug}")
+        logger.info("=" * 60 + "\n")
         
         # Log config info
-        logger.info("📋 Configuration loaded:")
+        logger.info("Configuration loaded:")
         logger.info(f"   Base directory: {config.base_dir}")
         logger.info(f"   Data directory: {config.dirs.get('data', 'Not set')}")
         logger.info(f"   Log directory: {config.dirs.get('logs', 'Not set')}")
@@ -183,9 +183,9 @@ async def main() -> int:
                     missing_apis.append(api_name)
             
             if missing_apis:
-                logger.warning(f"⚠️  Missing API keys: {', '.join(missing_apis)}")
+                logger.warning(f"Missing API keys: {', '.join(missing_apis)}")
             else:
-                logger.info("✅ All API keys configured")
+                logger.info("All API keys configured")
         
         # Setup signal handlers for graceful shutdown
         loop = asyncio.get_running_loop()
@@ -199,29 +199,29 @@ async def main() -> int:
         # Initialize components
         components = await initialize_basic_components(config, logger)
         
-        logger.info("✅ Initialization complete")
-        logger.info("\n" + "-"*60)
+        logger.info("Initialization complete")
+        logger.info("\n" + "-" * 60)
         
         # Run pipeline
         if args.test:
-            logger.info("🧪 Running in test mode (5 iterations)")
+            logger.info("Running in test mode (5 iterations)")
             await run_basic_pipeline(config, logger)
         else:
-            logger.info("⏳ Bot ready. Press Ctrl+C to stop.")
+            logger.info("Bot ready. Press Ctrl+C to stop.")
             # Just keep running
             while True:
                 await asyncio.sleep(1)
         
     except KeyboardInterrupt:
         if logger:
-            logger.info("\n👋 Bot stopped by user")
+            logger.info("\nBot stopped by user")
         exit_code = 0
         
     except Exception as e:
         if logger:
-            logger.error(f"❌ Fatal error: {e}", exc_info=True)
+            logger.error(f"Fatal error: {e}", exc_info=True)
         else:
-            print(f"❌ Fatal error: {e}")
+            print(f"Fatal error: {e}")
         exit_code = 1
         
     finally:
@@ -231,10 +231,10 @@ async def main() -> int:
         minutes, seconds = divmod(remainder, 60)
         
         if logger:
-            logger.info("\n" + "="*60)
-            logger.info(f"🛑 Bot shutting down")
-            logger.info(f"⏱️  Runtime: {int(hours)}h {int(minutes)}m {int(seconds)}s")
-            logger.info("="*60)
+            logger.info("\n" + "=" * 60)
+            logger.info(f"Bot shutting down")
+            logger.info(f"Runtime: {int(hours)}h {int(minutes)}m {int(seconds)}s")
+            logger.info("=" * 60)
     
     return exit_code
 
@@ -243,8 +243,8 @@ if __name__ == "__main__":
         exit_code = asyncio.run(main())
         sys.exit(exit_code)
     except KeyboardInterrupt:
-        print("\n👋 Bot stopped")
+        print("\nBot stopped")
         sys.exit(0)
     except Exception as e:
-        print(f"❌ Startup error: {e}")
+        print(f"Startup error: {e}")
         sys.exit(1)
